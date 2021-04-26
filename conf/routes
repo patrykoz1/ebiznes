@@ -1,0 +1,69 @@
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /                           controllers.HomeController.index
+# An example controller showing how to use dependency injection
+GET     /count                      controllers.CountController.count
+# An example controller showing how to write asynchronous code
+GET     /message                    controllers.AsyncController.message
+
+GET       /admin                           controllers.AdminController.index
+POST      /admin/add                        controllers.AdminController.add
+DELETE    /admin/delete                     controllers.AdminController.delete
+PATCH     /admin/update                     controllers.AdminController.patch
+
+GET       /category                           controllers.CategoryController.index
+POST      /category/add                        controllers.CategoryController.add
+DELETE    /category/delete                     controllers.CategoryController.delete
+PATCH     /category/update                     controllers.CategoryController.patch
+
+GET       /comment                           controllers.CommentController.index
+POST      /comment/add                        controllers.CommentController.add
+DELETE    /comment/delete                     controllers.CommentController.delete
+PATCH     /comment/update                     controllers.CommentController.patch
+
+GET       /invoice                           controllers.InvoiceController.index
+POST      /invoice/add                        controllers.InvoiceController.add
+DELETE    /invoice/delete                     controllers.InvoiceController.delete
+PATCH     /invoice/update                     controllers.InvoiceController.patch
+
+GET       /payment                           controllers.PaymentController.index
+POST      /payment/add                        controllers.PaymentController.add
+DELETE    /payment/delete                     controllers.PaymentController.delete
+PATCH     /payment/update                     controllers.PaymentController.patch
+
+GET       /product                           controllers.ProductController.index
+POST      /product/add                        controllers.ProductController.add
+DELETE    /product/delete                     controllers.ProductController.delete
+PATCH     /product/update                     controllers.ProductController.patch
+
+GET       /purchase                           controllers.PurchaseController.index
+POST      /purchase/add                        controllers.PurchaseController.add
+DELETE    /purchase/delete                     controllers.PurchaseController.delete
+PATCH     /purchase/update                     controllers.PurchaseController.patch
+
+GET       /shipping                           controllers.ShippingController.index
+POST      /shipping/add                        controllers.ShippingController.add
+DELETE    /shipping/delete                     controllers.ShippingController.delete
+PATCH     /shipping/update                     controllers.ShippingController.patch
+
+GET       /user                           controllers.UserController.index
+POST      /user/add                        controllers.UserController.add
+DELETE    /user/delete                     controllers.UserController.delete
+PATCH     /user/update                     controllers.UserController.patch
+
+
+GET       /rate                           controllers.RateController.index
+POST      /rate/add                        controllers.RateController.add
+DELETE    /rate/delete                     controllers.RateController.delete
+PATCH     /rate/update                     controllers.RateController.patch
+
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+      
