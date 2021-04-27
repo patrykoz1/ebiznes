@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ebiznes:
+    build: .
+    ports:
+      - "12345:9000"
+      - "12346:6000"
+    volumes:
+      - ./home/pzur/projekt/sklep
+    working_dir: /home/pzur/projekt/sklep
+    command: bash -c *source sbt run*
