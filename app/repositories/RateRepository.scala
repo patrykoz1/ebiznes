@@ -1,6 +1,6 @@
 package repositories
 
-import models.{ Rate}
+import models.{Purchase, Rate}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -35,4 +35,20 @@ class RateRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   def list(): Future[Seq[Rate]] = db.run {
     rate.result
   }
+  def getById(id: Int): Future[Rate] = db.run {
+    rate.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Rate]] = db.run {
+    rate.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(rate.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_inv: Rate): Future[Unit] = {
+    val comToUpdate: Rate = new_inv.copy(id)
+    db.run(rate.filter(_.id === id).update(comToUpdate)).map(_ => ())
+  }
+
 }

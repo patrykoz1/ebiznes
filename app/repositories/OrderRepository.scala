@@ -1,6 +1,6 @@
 package repositories
 
-import models.Order
+import models.{Invoice, Order}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -32,5 +32,20 @@ class OrderRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
 
   def list(): Future[Seq[Order]] = db.run {
     order.result
+  }
+  def getById(id: Int): Future[Order] = db.run {
+    order.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Order]] = db.run {
+    order.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(order.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_inv: Order): Future[Unit] = {
+    val comToUpdate: Order = new_inv.copy(id)
+    db.run(order.filter(_.id === id).update(comToUpdate)).map(_ => ())
   }
 }
