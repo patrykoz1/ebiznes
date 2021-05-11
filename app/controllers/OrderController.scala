@@ -3,39 +3,37 @@ package controllers
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, MessagesAbstractController, MessagesControllerComponents}
-import repositories.{CommentRepository, InvoiceRepository}
+import repositories.{OrderRepository}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CommentController @Inject()(invoiceRepo:InvoiceRepository,cc: MessagesControllerComponents)
+class OrderController @Inject()(orderRepo:OrderRepository,cc: MessagesControllerComponents)
                                  (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
-  val invoiceForm: Form[CreateInvoiceForm] = Form {
+  val orderForm: Form[CreateOrderForm] = Form {
     mapping(
-      "orderId" -> number,
+      "productId" -> number,
       "costumerId" -> number,
-      "type0f" -> number,
 
-    )(CreateInvoiceForm.apply)(CreateInvoiceForm.unapply)
+    )(CreateOrderForm.apply)(CreateOrderForm.unapply)
   }
 
-  val updateInvoiceForm: Form[UpdateInvoiceForm] = Form {
+  val updateOrderForm: Form[UpdateOrderForm] = Form {
     mapping(
       "id" -> number,
-      "orderId" -> number,
+      "productId" -> number,
       "costumerId" -> number,
-      "type0f" -> number,
-    )(UpdateInvoiceForm.apply)(UpdateInvoiceForm.unapply)
+    )(UpdateOrderForm.apply)(UpdateOrderForm.unapply)
   }
 
-  def getInvoices: Action[AnyContent] = Action.async { implicit request =>
-    val invoices = invoiceRepo.list()
-    invoices.map( comments => Ok(views.html.invoices(invoices)))
+  def getOrder: Action[AnyContent] = Action.async { implicit request =>
+    val ords = orderRepo.list()
+    ords.map( comments => Ok(views.html.orders(ords)))
   }
 
-  def getInvoiuce(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val comment = invoiceRepo.getById(id)
+  def getOrder(id: Int): Action[AnyContent] = Action.async { implicit request =>
+    val comment = orderRepo.getById(id)
     comment.map(comment => comment match {
       case Some(p) => Ok(views.html.index(p))
       case None => Redirect(routes.HomeController.get())
@@ -43,7 +41,7 @@ class CommentController @Inject()(invoiceRepo:InvoiceRepository,cc: MessagesCont
   }
 
   def delete(id: Int): Action[AnyContent] = Action {
-    invoiceRepo.delete(id)
+    orderRepo.delete(id)
     //Redirect("/c")
   }
 
@@ -60,5 +58,5 @@ class CommentController @Inject()(invoiceRepo:InvoiceRepository,cc: MessagesCont
     Ok(views.html.index("POST"))
   }
 }
-case class CreateInvoiceForm(orderId:Int,customerId:Int,typeOf:Int)
-case class UpdateInvoiceForm(id: Int,orderId:Int,customerId:Int,typeOf:Int)
+case class CreateOrderForm(orderId:Int,productId:Int,customerId:Int)
+case class UpdateOrderForm(id: Int,orderId:Int,customerId:Int,typeOf:Int)

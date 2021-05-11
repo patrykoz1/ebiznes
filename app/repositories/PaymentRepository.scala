@@ -1,6 +1,6 @@
 package repositories
 
-import models.{Payment}
+import models.{Invoice, Payment}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -31,5 +31,20 @@ class PaymentRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
 
   def list(): Future[Seq[Payment]] = db.run {
     payment.result
+  }
+  def getById(id: Int): Future[Payment] = db.run {
+    payment.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Payment]] = db.run {
+    payment.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(payment.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_inv: Payment): Future[Unit] = {
+    val comToUpdate: Payment = new_inv.copy(id)
+    db.run(payment.filter(_.id === id).update(comToUpdate)).map(_ => ())
   }
 }

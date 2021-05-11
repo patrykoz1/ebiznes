@@ -1,6 +1,6 @@
 package repositories
 
-import models.Invoice
+import models.{Comment, Invoice}
 
 import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
@@ -34,5 +34,20 @@ class InvoiceRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(imp
 
   def list(): Future[Seq[Invoice]] = db.run {
     invoice.result
+  }
+  def getById(id: Int): Future[Invoice] = db.run {
+    invoice.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Invoice]] = db.run {
+    invoice.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(invoice.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_inv: Invoice): Future[Unit] = {
+    val comToUpdate: Invoice = new_inv.copy(id)
+    db.run(invoice.filter(_.id === id).update(comToUpdate)).map(_ => ())
   }
 }

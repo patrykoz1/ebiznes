@@ -1,6 +1,6 @@
 package repositories
 
-import models.Category
+import models.{Category, Product}
 
 import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
@@ -33,5 +33,21 @@ class CategoryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   def list(): Future[Seq[Category]] = db.run {
     category.result
+  }
+
+  def getById(id: Int): Future[Category] = db.run {
+    category.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Category]] = db.run {
+    category.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(category.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_cat: Category): Future[Unit] = {
+    val catToUpdate: Category = new_cat.copy(id)
+    db.run(category.filter(_.id === id).update(catToUpdate)).map(_ => ())
   }
 }

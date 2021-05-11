@@ -33,4 +33,20 @@ class ShippingRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(imp
   def list(): Future[Seq[Shipping]] = db.run {
     shipping.result
   }
+  def getById(id: Int): Future[Shipping] = db.run {
+    shipping.filter(_.id === id).result.head
+  }
+
+  def getByIdOption(id: Int): Future[Option[Shipping]] = db.run {
+    shipping.filter(_.id === id).result.headOption
+  }
+
+
+  def delete(id: Int): Future[Unit] = db.run(shipping.filter(_.id === id).delete).map(_ => ())
+
+  def update(id: Int, new_inv: Shipping): Future[Unit] = {
+    val comToUpdate: Shipping = new_inv.copy(id)
+    db.run(shipping.filter(_.id === id).update(comToUpdate)).map(_ => ())
+  }
+
 }

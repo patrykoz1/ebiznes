@@ -35,7 +35,6 @@ CREATE TABLE "product" (
                            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                            "name" VARCHAR NOT NULL,
                            "description" TEXT NOT NULL,
-                           "productId" INTEGER NOT NULL,
                            "categoryId" INT NOT NULL,
 );
 CREATE TABLE "purchase" (
