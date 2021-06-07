@@ -19,5 +19,9 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
+  def updateProductHandle = Action{
+    Ok(views.html.index("Your new application is ready."))
+
+  }
 
 }

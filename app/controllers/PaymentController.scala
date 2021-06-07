@@ -1,7 +1,9 @@
 package controllers
 
+import models.Payment
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, MessagesAbstractController, MessagesControllerComponents}
 import repositories.PaymentRepository
 
@@ -28,20 +30,50 @@ class PaymentController @Inject()(paymentRepo:PaymentRepository, cc: MessagesCon
 
   def getPayments: Action[AnyContent] = Action.async { implicit request =>
     val payments = paymentRepo.list()
-    payments.map( comments => Ok(views.html.payments(payments)))
+    payments.map( comments => Ok(views.html.payments(comments)))
   }
 
   def getPayment(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val payment = paymentRepo.getById(id)
+    val payment = paymentRepo.getByIdOption(id)
     payment.map(payment => payment match {
-      case Some(p) => Ok(views.html.index(p))
-      case None => Redirect(routes.HomeController.get())
+      case Some(p) => Ok(views.html.payments(Seq(p)))
+      case None => Redirect(routes.HomeController.index)
     })
   }
 
-  def delete(id: Int): Action[AnyContent] = Action {
-    paymentRepo.delete(id)
+  def delete(id: Int): Action[AnyContent] = Action.async {
+    paymentRepo.delete(id).map{
+      res => Ok(Json.toJson(id))
+    }
     //Redirect("/c")
+  }
+  def getPaymentsJSON: Action[AnyContent] = Action.async { implicit request =>
+    val payments = paymentRepo.list()
+    payments.map( payments => Ok(Json.toJson(payments)))
+  }
+
+  def getPaymentJSON(id: Int): Action[AnyContent] = Action.async { implicit request =>
+    val payment = paymentRepo.getByIdOption(id)
+    payment.map(payment => payment match {
+      case Some(p) => Ok(Json.toJson(p))
+      case None => Redirect(routes.HomeController.index)
+    })
+  }
+  def addJSON(typeOf: Int): Action[AnyContent] = Action.async { implicit request =>
+    paymentRepo.create(typeOf).map {
+      res => Ok(Json.toJson(res))
+    }
+  }
+  def updateJSON(id: Int, typeOf: Int): Action[AnyContent] = Action.async { implicit request =>
+    paymentRepo.update(id, new Payment(id,typeOf)).map {
+      res => Ok(Json.toJson(id))
+    }
+  }
+
+  def deleteJSON(id: Int): Action[AnyContent] = Action.async {
+    paymentRepo.delete(id).map{
+      res =>  Ok(Json.toJson(id))
+    }
   }
 
   def index = Action {

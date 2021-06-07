@@ -31,19 +31,21 @@ class RateController @Inject()(rateRepo:RateRepository, cc: MessagesControllerCo
 
   def getRates: Action[AnyContent] = Action.async { implicit request =>
     val rates = rateRepo.list()
-    rates.map( comments => Ok(views.html.rates(rates)))
+    rates.map( rates => Ok(views.html.rates(rates)))
   }
 
   def getRate(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val rate = rateRepo.getById(id)
+    val rate = rateRepo.getByIdOption(id)
     rate.map(rate => rate match {
-      case Some(p) => Ok(views.html.index(p))
-      case None => Redirect(routes.HomeController.get())
+      case Some(p) => Ok(views.html.rates(Seq(p)))
+      case None => Ok(views.html.rates(Seq()))
     })
   }
 
-  def delete(id: Int): Action[AnyContent] = Action {
-    rateRepo.delete(id)
+  def delete(id: Int): Action[AnyContent] = Action.async {
+    rateRepo.delete(id).map{
+      res => Ok(views.html.rates(Seq()))
+    }
     //Redirect("/c")
   }
 

@@ -10,20 +10,21 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
-GET       /admin                           controllers.AdminController.index
-POST      /admin/add                        controllers.AdminController.add
+GET       /admin                            controllers.AdminController.index
 DELETE    /admin/delete                     controllers.AdminController.delete
 PATCH     /admin/update                     controllers.AdminController.patch
 
-GET       /category                           controllers.CategoryController.index
-POST      /category/add                        controllers.CategoryController.add
-DELETE    /category/delete                     controllers.CategoryController.delete
-PATCH     /category/update                     controllers.CategoryController.patch
+GET       /category/:id                            controllers.CategoryController.getCategoryJSON(id:Int)
+GET       /categories                          controllers.CategoryController.getCategoriesJSON
+POST      /category/add                        controllers.CategoryController.addJSON(name:String,description:String)
+DELETE    /category/delete                     controllers.CategoryController.deleteJSON(id:Int)
+PATCH     /category/update                     controllers.CategoryController.updateJSON(id:Int,name:String,description:String)
 
 GET       /comment                           controllers.CommentController.index
 POST      /comment/add                        controllers.CommentController.add
 DELETE    /comment/delete                     controllers.CommentController.delete
 PATCH     /comment/update                     controllers.CommentController.patch
+
 
 GET       /invoice                           controllers.InvoiceController.index
 POST      /invoice/add                        controllers.InvoiceController.add

@@ -33,20 +33,21 @@ class UserController @Inject()(userRepo:UserRepository, cc: MessagesControllerCo
 
   def getUsers: Action[AnyContent] = Action.async { implicit request =>
     val users =userRepo.list()
-    users.map( comments => Ok(views.html.users(users)))
+    users.map( users => Ok(views.html.users(users)))
   }
 
   def getUser(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val user =userRepo.getById(id)
+    val user =userRepo.getByIdOption(id)
     user.map(user => user match {
-      case Some(p) => Ok(views.html.index(p))
-      case None => Redirect(routes.HomeController.get())
+      case Some(p) => Ok(views.html.users(Seq(p)))
+      case None =>Ok(views.html.users(Seq()))
     })
   }
 
-  def delete(id: Int): Action[AnyContent] = Action {
-    userRepo.delete(id)
-    //Redirect("/c")
+  def delete(id: Int): Action[AnyContent] = Action.async {
+    userRepo.delete(id).map{
+      res => Redirect(routes.HomeController.index)
+    }
   }
 
   def index = Action {

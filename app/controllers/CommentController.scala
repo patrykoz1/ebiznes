@@ -1,7 +1,9 @@
 package controllers
 
+import models.Comment
 import play.api.data.Form
 import play.api.data.Forms.{mapping, nonEmptyText, number}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, MessagesAbstractController, MessagesControllerComponents}
 import repositories.CommentRepository
 
@@ -29,22 +31,34 @@ class CommentController @Inject()(commentRepo:CommentRepository,cc: MessagesCont
     )(UpdateCommentForm.apply)(UpdateCommentForm.unapply)
   }
 
-  def getComments: Action[AnyContent] = Action.async { implicit request =>
+  def getCommentsJSON: Action[AnyContent] = Action.async { implicit request =>
     val comments = commentRepo.list()
-    comments.map( comments => Ok(views.html.comments(comments)))
+    comments.map( comments => Ok(Json.toJson(comments)))
   }
 
-  def getComment(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val comment = commentRepo.getById(id)
+  def getCommentJSON(id: Int): Action[AnyContent] = Action.async { implicit request =>
+    val comment = commentRepo.getByIdOption(id)
     comment.map(comment => comment match {
-      case Some(p) => Ok(views.html.index(p))
-      case None => Redirect(routes.HomeController.get())
+      case Some(p) => Ok(Json.toJson(p))
+      case None => Redirect(routes.HomeController.index)
     })
   }
 
-  def delete(id: Int): Action[AnyContent] = Action {
-    commentRepo.delete(id)
-    //Redirect("/c")
+  def deleteJSON(id: Int): Action[AnyContent] = Action.async {
+    commentRepo.delete(id).map{
+      res => Ok(Json.toJson(id))}
+
+  }
+
+  def addJSON(body: String,productId:Int,customerId:Int): Action[AnyContent] = Action.async { implicit request =>
+    commentRepo.create(body,productId,customerId).map {
+      res => Ok(Json.toJson(res))
+    }
+  }
+  def updateJSON(id: Int, body: String,productId:Int,customerId:Int): Action[AnyContent] = Action.async { implicit request =>
+    commentRepo.update(id, new Comment(id,body,productId,customerId)).map {
+      res => Ok(Json.toJson(id))
+    }
   }
 
   def index = Action {
@@ -61,5 +75,5 @@ class CommentController @Inject()(commentRepo:CommentRepository,cc: MessagesCont
   }
 
 }
-case class CreateCommentForm(name: String, description: String)
-case class UpdateCommentForm(id: Int, name: String, description: String)
+case class CreateCommentForm(body: String, costumerId: Int,clientId:Int)
+case class UpdateCommentForm(id: Int, body: String, costumerId: Int,clientId:Int)
