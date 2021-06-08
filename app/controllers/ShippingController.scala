@@ -27,22 +27,24 @@ class ShippingController @Inject()(shippingRepo:ShippingRepository, cc: Messages
     )(UpdateShippingForm.apply)(UpdateShippingForm.unapply)
   }
 
-  def getShippings: Action[AnyContent] = Action.async { implicit request =>
+  def getShippings: Action[AnyContent] = Action.async {
+    implicit request =>
     val shippings = shippingRepo.list()
-    shippings.map( comments => Ok(views.html.shippings(shippings)))
+    shippings.map( shippings => Ok(views.html.shippings(shippings)))
   }
 
   def getShipping(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    val shipping = shippingRepo.getById(id)
+    val shipping = shippingRepo.getByIdOption(id)
     shipping.map(shipping => shipping match {
-      case Some(p) => Ok(views.html.index(p))
-      case None => Redirect(routes.HomeController.get())
+      case Some(p) => Ok(views.html.shippings(Seq(p)))
+      case None => Ok(views.html.shippings(Seq()))
     })
   }
 
-  def delete(id: Int): Action[AnyContent] = Action {
-    shippingRepo.delete(id)
-    //Redirect("/c")
+  def delete(id: Int): Action[AnyContent] = Action.async {
+    shippingRepo.delete(id).map{
+      res => Ok(views.html.shippings(Seq()))
+    }
   }
 
   def index = Action {
