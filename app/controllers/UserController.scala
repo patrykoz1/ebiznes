@@ -13,10 +13,9 @@ class UserController @Inject()(userRepo:UserRepository, cc: MessagesControllerCo
 
   val userForm: Form[CreateUserForm] = Form {
     mapping(
-      "firstName"->nonEmptyText,
-      "secondName"->nonEmptyText,
+      "providerId"->nonEmptyText,
+      "providerKey"->nonEmptyText,
       "email"->nonEmptyText,
-      "password"->nonEmptyText
 
     )(CreateUserForm.apply)(CreateUserForm.unapply)
   }
@@ -24,15 +23,15 @@ class UserController @Inject()(userRepo:UserRepository, cc: MessagesControllerCo
   val updateUserForm: Form[UpdateUserForm] = Form {
     mapping(
       "id" -> number,
-      "firstName"->nonEmptyText,
-      "secondName"->nonEmptyText,
+      "providerId"->nonEmptyText,
+      "providerKey"->nonEmptyText,
       "email"->nonEmptyText,
-      "password"->nonEmptyText
+
     )(UpdateUserForm.apply)(UpdateUserForm.unapply)
   }
 
   def getUsers: Action[AnyContent] = Action.async { implicit request =>
-    val users =userRepo.list()
+    val users =userRepo.getAll
     users.map( users => Ok(views.html.users(users)))
   }
 
@@ -63,5 +62,5 @@ class UserController @Inject()(userRepo:UserRepository, cc: MessagesControllerCo
     Ok(views.html.index("POST"))
   }
 }
-case class CreateUserForm(firstName:String,secondName:String, email:String,password:String)
-case class UpdateUserForm(id: Int,firstName:String,secondName:String, email:String,password:String)
+case class CreateUserForm(providerId: String, providerKey: String, email: String)
+case class UpdateUserForm(id: Int,providerId: String, providerKey: String, email: String)

@@ -6,6 +6,8 @@ CREATE TABLE "category"
                             "name" VARCHAR NOT NULL,
                             "description" VARCHAR NOT NULL
 );
+INSERT INTO "category"("name","description") VALUES("diver","do nurkowania!");
+INSERT INTO "category"("name","description") VALUES("garniturowiec","na wyjścia");
 
 CREATE TABLE "comment"
 (
@@ -46,6 +48,9 @@ CREATE TABLE "product"
                            "description" TEXT NOT NULL,
                            "categoryId" INT NOT NULL
 );
+INSERT INTO "product"("name","description","categoryId") VALUES("Seiko sea urchin","do nurkowania!",1);
+INSERT INTO "product"("name","description","categoryId") VALUES("Invicta","fajny diver",1);
+
 
 CREATE TABLE "purchase"
 (
@@ -74,13 +79,38 @@ CREATE TABLE "shipping"
 
 CREATE TABLE "user"
 (
-                            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                            "firstName" VARCHAR NOT NULL,
-                            "secondName" VARCHAR NOT NULL,
-                            "email" VARCHAR NOT NULL,
-                            "password" VARCHAR NOT NULL
-                            );
+    "id"          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "providerId"  VARCHAR NOT NULL,
+    "providerKey" VARCHAR NOT NULL,
+    "email"       VARCHAR NOT NULL
+);
 
+CREATE TABLE "authToken"
+(
+    "id"     INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userId" INT     NOT NULL,
+    FOREIGN KEY (userId) references user (id)
+);
+
+CREATE TABLE "passwordInfo"
+(
+    "id"          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "providerId"  VARCHAR NOT NULL,
+    "providerKey" VARCHAR NOT NULL,
+    "hasher"      VARCHAR NOT NULL,
+    "password"    VARCHAR NOT NULL,
+    "salt"        VARCHAR
+);
+
+CREATE TABLE "oAuth2Info"
+(
+    "id"          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "providerId"  VARCHAR NOT NULL,
+    "providerKey" VARCHAR NOT NULL,
+    "accessToken" VARCHAR NOT NULL,
+    "tokenType"   VARCHAR,
+    "expiresIn"   INTEGER
+);
 # --- !Downs
 
 DROP TABLE "category";
@@ -93,3 +123,13 @@ DROP TABLE "purchase";
 DROP TABLE "rate";
 DROP TABLE "shipping";
 DROP TABLE "user";
+DROP TABLE "authToken";
+DROP TABLE "passwordInfo";
+DROP TABLE "oAuth2Info";
+
+DELETE FROM "category" WHERE name="diver";
+DELETE FROM "category" WHERE name="garniturowiec";
+
+DELETE FROM "product" WHERE name="Seiko sea urchin";
+DELETE FROM "product" WHERE name="Invicta";
+
