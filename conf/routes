@@ -36,9 +36,10 @@ POST      /payment/add                        controllers.PaymentController.add
 DELETE    /payment/delete                     controllers.PaymentController.delete
 PATCH     /payment/update                     controllers.PaymentController.patch
 
-GET       /product                           controllers.ProductController.index
-POST      /product/add                        controllers.ProductController.add
-DELETE    /product/delete                     controllers.ProductController.delete
+GET       /product                           controllers.ProductController.getProductJson(id:Int)
+GET       /products                             controllers.ProductController.getProductsJson
+POST      /product/add                        controllers.ProductController.addProductJson(name: String,description: String,categoryId: Int)
+DELETE    /product/delete/:id                     controllers.ProductController.deleteJson(id:Int)
 PATCH     /product/update                     controllers.ProductController.patch
 
 GET       /purchase                           controllers.PurchaseController.index
@@ -61,6 +62,12 @@ GET       /rate                           controllers.RateController.index
 POST      /rate/add                        controllers.RateController.add
 DELETE    /rate/delete                     controllers.RateController.delete
 PATCH     /rate/update                     controllers.RateController.patch
+
+# Authentication
+POST        /signUp                                   controllers.SignUpController.signUp
+POST        /signIn                                   controllers.SignInController.signIn
+POST        /signOut                                  controllers.SignInController.signOut
+GET         /authenticate/:provider        controllers.SocialAuthController.authenticate(provider: String)
 
 
 

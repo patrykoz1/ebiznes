@@ -25,7 +25,7 @@ class ProductRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impl
 
   val product = TableQuery[ProductTable]
 
-  def create(name: String,description: String,productId: Int,categoryId: Int): Future[Product] = db.run {
+  def create(name: String,description: String,categoryId: Int): Future[Product] = db.run {
     (product.map(c => (c.name,c.description,c.categoryId))
       returning product.map(_.id)
       into { case ((name, description,categoryId), id) => Product(id, name, description,categoryId) }
