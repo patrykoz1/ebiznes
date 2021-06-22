@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y &&\
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $JAVA_HOME/bin:$PATH
 
+#curl
 RUN apt-get update && apt install -y wget \
 	curl
 
@@ -19,15 +20,14 @@ RUN wget https://scala-lang.org/files/archive/scala-2.12.8.deb &&\
 	apt-get install scala
 
 #sbt
-RUN curl -L -o sbt-1.4.8.deb http://dl.bintray.com/sbt/debian/sbt-1.4.8.deb &&\
-	dpkg -i sbt-1.4.8.deb &&\
-	rm sbt-1.4.8.deb &&\
-	apt-get update &&\
-	apt-get install sbt
+RUN mkdir -p "/usr/local/sbt"
+RUN wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v1.4.8/sbt-1.4.8.tgz" | tar xz -C /usr/local/sbt --strip-components=1
+
 
 #npm
 RUN curl -fsSL https://rpm.nodesource.com/setup_current.x &&\
 	apt install -y npm
+RUN apt install -y nodejs
 
 ENV LC_ALL=C.UTF-8
 ENV LAND=C.UTF-8

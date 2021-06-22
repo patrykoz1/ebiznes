@@ -36,7 +36,7 @@ POST      /payment/add                        controllers.PaymentController.add
 DELETE    /payment/delete                     controllers.PaymentController.delete
 PATCH     /payment/update                     controllers.PaymentController.patch
 
-GET       /product                           controllers.ProductController.getProductJson(id:Int)
+GET       /product/:id                           controllers.ProductController.getProductJson(id:Int)
 GET       /products                             controllers.ProductController.getProductsJson
 POST      /product/add                        controllers.ProductController.addProductJson(name: String,description: String,categoryId: Int)
 DELETE    /product/delete/:id                     controllers.ProductController.deleteJson(id:Int)
