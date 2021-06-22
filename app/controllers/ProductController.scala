@@ -71,9 +71,15 @@ class ProductController @Inject()(productsRepo:ProductRepository,categoryRepo:Ca
       res => Ok(Json.toJson(id))}
   }
 
+
   def updateJson(id: Int, name: String, description: String, categoryId: Int): Unit ={
     productsRepo.update(id, new Product(id,name,description,categoryId)).map {
       res => Ok(Json.toJson(id))
+    }
+  }
+  def addProductJson(name: String,description: String,categoryId: Int): Action[AnyContent] = Action.async { implicit request =>
+    productsRepo.create(name,description,categoryId).map {
+      res => Ok(Json.toJson(res))
     }
   }
 

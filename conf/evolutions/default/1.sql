@@ -8,6 +8,7 @@ CREATE TABLE "category"
 );
 INSERT INTO "category"("name","description") VALUES("diver","do nurkowania!");
 INSERT INTO "category"("name","description") VALUES("garniturowiec","na wyjścia");
+INSERT INTO "category"("name","description") VALUES("sport","wytrzymały");
 
 CREATE TABLE "comment"
 (
@@ -48,8 +49,10 @@ CREATE TABLE "product"
                            "description" TEXT NOT NULL,
                            "categoryId" INT NOT NULL
 );
-INSERT INTO "product"("name","description","categoryId") VALUES("Seiko sea urchin","do nurkowania!",1);
-INSERT INTO "product"("name","description","categoryId") VALUES("Invicta","fajny diver",1);
+INSERT INTO "product"("name","description","categoryId") VALUES("Seiko sea urchin","Świetny japoński diver z serii 5. Mechanizm 4r36 ze stop-sekundą.",1);
+INSERT INTO "product"("name","description","categoryId") VALUES("Invicta ProDiver","Tani odpowiednik zaawansowanych diverów. Szkło mineralne, werk 4r36",1);
+INSERT INTO "product"("name","description","categoryId") VALUES("DeepBlue Jugernaut IV","Zegarek bez kompromisów. Jedna z najmocniejszych lum na rynku",1);
+INSERT INTO "product"("name","description","categoryId") VALUES("Casio g-schock GW7900B","Wytrzymałość i niezawodność = gschock. Zasilanie solarne, oraz radiowa synchronizacja",3);
 
 
 CREATE TABLE "purchase"
