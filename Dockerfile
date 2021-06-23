@@ -42,10 +42,13 @@ RUN useradd -ms /bin/bash pzur
 RUN adduser pzur sudo
 
 USER pzur
-WORKDIR /home/pzur/
-RUN mkdir /home/pzur/workshop/
+#WORKDIR /home/pzur/
+#RUN mkdir /home/pzur/workshop/
 
-VOLUME ["/home/pzur/workshop/"]
+#VOLUME ["/home/pzur/workshop/"]
 #some changes below...
+WORKDIR .
+
+COPY . .
 RUN /usr/local/sbt/bin/sbt package -Dsbt.rootdir=true
 ENTRYPOINT bash /usr/local/sbt/bin/sbt run -Dsbt.rootdir=true
