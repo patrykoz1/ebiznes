@@ -38,17 +38,17 @@ EXPOSE 5000
 EXPOSE 8080
 
 
-RUN useradd -ms /bin/bash pzur
-RUN adduser pzur sudo
+#RUN useradd -ms /bin/bash pzur
+#RUN adduser pzur sudo
 
-USER pzur
-WORKDIR /home/pzur/
-RUN mkdir /home/pzur/workshop/
+#USER pzur
+#WORKDIR /home/pzur/
+#RUN mkdir /home/pzur/workshop/
 
-VOLUME ["/home/pzur/workshop/"]
+#VOLUME ["/home/pzur/workshop/"]
 #some changes below...
-#WORKDIR .
+WORKDIR .
 
-#COPY . .
-#RUN /usr/local/sbt/bin/sbt package -Dsbt.rootdir=true
-#ENTRYPOINT bash /usr/local/sbt/bin/sbt run -Dsbt.rootdir=true
+COPY . .
+RUN /usr/local/sbt/bin/sbt package -Dsbt.rootdir=true
+ENTRYPOINT bash /usr/local/sbt/bin/sbt run -Dsbt.rootdir=true
