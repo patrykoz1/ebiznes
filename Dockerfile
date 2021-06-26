@@ -44,4 +44,3 @@ COPY . .
 
 RUN /usr/local/sbt/bin/sbt package -Dsbt.rootdir=true
 ENTRYPOINT bash /usr/local/sbt/bin/sbt run -Dsbt.rootdir=true
-
