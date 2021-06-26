@@ -1,48 +1,47 @@
-FROM ubuntu:18.04
+FROM ubuntu
 
-#Java
-RUN apt-get update && apt-get upgrade -y &&\
-	apt-get install -y software-properties-common &&\
-	add-apt-repository ppa:openjdk-r/ppa &&\
-	apt-get -y install openjdk-8-jdk
+#install JDK
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+    apt-get install -y ant && \
+    apt-get clean;
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH $JAVA_HOME/bin:$PATH
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+RUN export JAVA_HOME
 
-#curl
-RUN apt-get update && apt install -y wget \
-	curl
+#install wget
+RUN apt-get install -y wget
 
-#Scala
-RUN wget https://scala-lang.org/files/archive/scala-2.12.8.deb &&\
-	dpkg -i scala-2.12.8.deb &&\
-	apt-get update &&\
-	apt-get install scala
+#install scala
+RUN wget https://downloads.lightbend.com/scala/2.12.13/scala-2.12.13.deb
+RUN dpkg -i scala-2.12.13.deb
 
-#sbt
+#install curl
+RUN apt-get install -y curl
+
+#install node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_15.x
+RUN apt-get install -y nodejs
+RUN apt install -y npm
+
+#install sbt
+#RUN curl -L -o sbt-1.4.8.deb http://dl.bintray.com/sbt/debian/sbt-1.4.8.deb
+#RUN dpkg -i sbt-1.4.8.deb
+#RUN rm sbt-1.4.8.deb
+#RUN apt-get update
+#RUN apt-get install sbt
 RUN mkdir -p "/usr/local/sbt"
 RUN wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v1.4.8/sbt-1.4.8.tgz" | tar xz -C /usr/local/sbt --strip-components=1
 
-
-#npm
-RUN curl -fsSL https://rpm.nodesource.com/setup_current.x &&\
-	apt install -y npm
-RUN apt install -y nodejs
-
-ENV LC_ALL=C.UTF-8
-ENV LAND=C.UTF-8
-
-EXPOSE 9000
+#porty
 EXPOSE 3000
-EXPOSE 5000
-EXPOSE 8080
+EXPOSE 9000
+
+WORKDIR .
+
+COPY . .
 
 
-RUN useradd -ms /bin/bash pzur
-RUN adduser pzur sudo
+RUN /usr/local/sbt/bin/sbt package -Dsbt.rootdir=true
+ENTRYPOINT bash /usr/local/sbt/bin/sbt run -Dsbt.rootdir=true
 
-USER pzur
-WORKDIR /home/pzur/
-RUN mkdir /home/pzur/workshop/
-
-VOLUME ["/home/pzur/workshop/"]
