@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - "12345:9000"
-      - "12346:6000"
+      - "12346:3000"
     volumes:
       - ./home/pzur/projekt/sklep
     working_dir: /home/pzur/projekt/sklep
