@@ -1,9 +1,9 @@
-package controllers
+package controllers.auth
 
-import akka.parboiled2.RuleTrace.Action
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.impl.providers._
-import play.api.mvc.Results.Redirect
+import controllers.auth.DefaultSilhouetteControllerComponents
+import models.User
 
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, Cookie, Request}
@@ -21,11 +21,12 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            _ <- userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse(""))
+            res <- userRepository.getByEmail(profile.email.getOrElse(""))
+            user <- if (res.orNull == null) userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse("")) else userRepository.getByEmail(profile.email.getOrElse(""))
             _ <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(value, Redirect("https://uj-ebiznes-front.azurewebsites.net"))
+            result <- authenticatorService.embed(value, Redirect(s"http://uj-ebiznes-front.azurewebsites.net?user-id=${user}"))
           } yield {
             val Token(name, value) = CSRF.getToken.get
             result.withCookies(Cookie(name, value, httpOnly = false))
