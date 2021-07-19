@@ -1,4 +1,4 @@
-package controllers.auth
+package controllers
 
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.impl.providers._
