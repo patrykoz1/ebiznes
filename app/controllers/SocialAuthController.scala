@@ -4,28 +4,32 @@ import akka.parboiled2.RuleTrace.Action
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.impl.providers._
 import play.api.mvc.Results.Redirect
+import controllers.SilhouetteController
 
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, Cookie, Request}
 import play.filters.csrf.CSRF.Token
 import play.filters.csrf.{CSRF, CSRFAddToken}
 import scala.concurrent.{ExecutionContext, Future}
+
+
 class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents, addToken: CSRFAddToken)(implicit ex: ExecutionContext) extends SilhouetteController(scc) {
+
   def authenticate(provider: String): Action[AnyContent] = addToken(Action.async { implicit request: Request[AnyContent] =>
     (socialProviderRegistry.get[SocialProvider](provider) match {
       case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
         p.authenticate().flatMap {
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
-        
             profile <- p.retrieveProfile(authInfo)
-            _ <- userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse(""))
-           
+            res <- userRepository.getByEmail(profile.email.getOrElse(""))
+            user <- if (res == null) userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse(""))
+            else userRepository.getByEmail(profile.email.getOrElse(""))
             _ <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(value, Redirect("https://uj-ebiznes-front.azurewebsites.net"))}
-           yield {
+            result <- authenticatorService.embed(value, Redirect(s"http://ebiznes-front.azurewebsites.net?user-id=${user}"))
+          } yield {
             val Token(name, value) = CSRF.getToken.get
             result.withCookies(Cookie(name, value, httpOnly = false))
           }
