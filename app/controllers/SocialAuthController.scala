@@ -10,6 +10,7 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, Cookie, Request}
 import play.filters.csrf.CSRF.Token
 import play.filters.csrf.{CSRF, CSRFAddToken}
+import repositories.UserRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -22,13 +23,16 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            res <- userRepository.getByEmail(profile.email.getOrElse(""))
+            /*res <- userRepository.getByEmail(profile.email.getOrElse(""))
             user <- if (res == null) userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse(""))
-            else userRepository.getByEmail(profile.email.getOrElse(""))
+            else userRepository.getByEmail(profile.email.getOrElse(""))*/
+            _ <- userRepository.create(profile.loginInfo.providerID,profile.loginInfo.providerKey,profile.email.get)
             _ <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(value, Redirect(s"https://uj-ebiznes-front.azurewebsites.net?user-id=${user}"))
+            //result <- authenticatorService.embed(value, Redirect(s"http://ebiznes-front.azurewebsites.net?user-id=${user}"))
+            result <- authenticatorService.embed(value, Redirect("http://ebiznes-front.azurewebsites.net"))
+
           } yield {
             val Token(name, value) = CSRF.getToken.get
             result.withCookies(Cookie(name, value, httpOnly = false))
@@ -40,4 +44,3 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
         Forbidden("Forbidden")
     }
   })
-}
