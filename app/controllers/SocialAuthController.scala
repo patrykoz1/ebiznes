@@ -44,3 +44,4 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
         Forbidden("Forbidden")
     }
   })
+}
