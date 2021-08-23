@@ -64,12 +64,12 @@ DELETE    /rate/delete                     controllers.RateController.delete
 PATCH     /rate/update                     controllers.RateController.patch
 
 # Authentication
-+ nocsrf
++nocsrf
 POST        /signUp                                   controllers.SignUpController.signUp
-+ nocsrf
++nocsrf
 POST        /signIn                                   controllers.SignInController.signIn
-
-GET        /signOut                                  controllers.SignInController.signOut
++nocsrf
+POST        /signOut                                  controllers.SignInController.signOut
 
 GET         /authenticate/:provider        controllers.SocialAuthController.authenticate(provider: String)
 
