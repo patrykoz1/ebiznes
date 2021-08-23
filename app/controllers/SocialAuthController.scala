@@ -42,6 +42,7 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
             result <- authenticatorService.embed(value, Redirect(s"http://localhost:3000?user-id=${user}"))
+
           } yield {
             val Token(name, value) = CSRF.getToken.get
             result.withCookies(Cookie(name, value, httpOnly = false))
@@ -109,3 +110,4 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
     }
   })*/
 }
+
