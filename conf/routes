@@ -53,6 +53,7 @@ DELETE    /shipping/delete                     controllers.ShippingController.de
 PATCH     /shipping/update                     controllers.ShippingController.patch
 
 GET       /user                           controllers.UserController.index
+GET       /user/:id                          controllers.UserController.getUser(id:Int)
 POST      /user/add                        controllers.UserController.add
 DELETE    /user/delete                     controllers.UserController.delete
 PATCH     /user/update                     controllers.UserController.patch

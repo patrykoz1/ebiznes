@@ -65,11 +65,12 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            _ <- userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse("")) 
+            res <- userRepository.getByEmailOption(profile.email.getOrElse(""))
+            user <- if (res.orNull == null) userRepository.create(profile.loginInfo.providerID, profile.loginInfo.providerKey, profile.email.getOrElse("")) else userRepository.getByEmail(profile.email.getOrElse(""))
             _ <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(value, Redirect(s"http://localhost:3000?user-id=${authInfoRepository.find(profile.loginInfo)}"))
+            result <- authenticatorService.embed(value, Redirect(s"http://localhost:3000?user-id=${user.id}"))
           } yield {
             val Token(name, value) = CSRF.getToken.get
             result.withCookies(Cookie(name, value, httpOnly = false))
