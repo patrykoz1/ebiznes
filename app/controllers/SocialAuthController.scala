@@ -72,7 +72,7 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
 
-            result <- authenticatorService.embed(value, Redirect(s"https://uj-ebiznes-front.azurewebsites.net/?user-id=${user}"))
+            result <- authenticatorService.embed(value, Redirect(s"https://uj-ebiznes-front.azurewebsites.net/?user-id=${user.id}"))
 
           } yield {
             val Token(name, value) = CSRF.getToken.get
