@@ -2,6 +2,7 @@ package controllers
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, nonEmptyText, number}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, MessagesAbstractController, MessagesControllerComponents}
 import repositories.UserRepository
 
@@ -35,13 +36,19 @@ class UserController @Inject()(userRepo:UserRepository, cc: MessagesControllerCo
     users.map( users => Ok(views.html.users(users)))
   }
 
-  def getUser(id: Int): Action[AnyContent] = Action.async { implicit request =>
+  def getUser(id: Int): Action[AnyContent] = Action.async { /*implicit request =>
     val user =userRepo.getByIdOption(id)
     user.map(user => user match {
       case Some(p) => Ok(views.html.users(Seq(p)))
       case None =>Ok(views.html.users(Seq()))
     })
-  }
+  }*/ implicit request =>
+      val user = userRepo.getByIdOption(id)
+      user.map(user => user match {
+        case Some(p) => Ok(Json.toJson(user))
+        case None => Redirect(routes.HomeController.index)
+      })
+    }
 
   def delete(id: Int): Action[AnyContent] = Action.async {
     userRepo.delete(id).map{
